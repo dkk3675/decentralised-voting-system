@@ -22,5 +22,5 @@
   },
   "include": [
     "src"
-  ]
+, "election-contract/compile.js"  ]
 }
