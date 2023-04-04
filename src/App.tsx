@@ -35,7 +35,7 @@ const App = () => {
           let a:any = sessionStorage.getItem('aadhar');
           setAadhar(a);
         }
-    if (contract) {
+    if (contract !== undefined) {
             contract.methods.admin().call()
             .then((res: string) => {
                 setAdmin(res);
