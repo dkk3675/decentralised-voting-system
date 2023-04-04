@@ -35,6 +35,7 @@ const App = () => {
           setAadhar(a);
         }
     if (contract) {
+      window.ethereum.request({ method: 'eth_requestAccounts' });
       contract.methods.admin().call()
         .then((res: string) => {
           setAdmin(res);
