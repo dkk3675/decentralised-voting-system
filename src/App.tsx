@@ -15,19 +15,18 @@ const App = () => {
   const [aadhar, setAadhar] = useState('------------');
   const [phase, setPhase] = useState<number>(3);
   const [admin, setAdmin] = useState('');
+  // const [web3, setWeb3] = useState(null);
+  // const [contract, setContract] = useState(null);
   let web3: any;
   let contract: any;
   if (window.ethereum) {
     // window.ethereum.request({ method: 'eth_requestAccounts' });
     web3 = new Web3(window.ethereum);
-    contract = new web3.eth.Contract(abi, address);
+    if (web3) {
+      contract = new web3.eth.Contract(abi, address);
+    }
   }
   useEffect(() => {
-        // if (window.ethereum) {
-        //   window.ethereum.request({ method: 'eth_requestAccounts' });
-        //   web3 = new Web3(window.ethereum);
-        //   contract = new web3.eth.Contract(abi, address);
-        // }
         if (sessionStorage.getItem('isLogged') === 'true') {
           setIsLogged(true);
         }
@@ -35,20 +34,22 @@ const App = () => {
           let a:any = sessionStorage.getItem('aadhar');
           setAadhar(a);
         }
-    if (contract !== undefined) {
-            contract.methods.admin().call()
-            .then((res: string) => {
-                setAdmin(res);
-            });
-        }
+    if (contract) {
+      contract.methods.admin().call()
+        .then((res: string) => {
+          setAdmin(res);
+        });
+    }
     },[admin]);
   
   useEffect(() => {
-    contract.methods.state().call()
-      .then((res: setPage['phase']) => {
-        setPhase(Number(res));
-        // console.log(typeof(Number(res)),res);
-      });
+    if (contract) {
+      contract.methods.state().call()
+        .then((res: setPage['phase']) => {
+          setPhase(Number(res));
+          // console.log(typeof(Number(res)),res);
+        });
+    }
   },[phase]);
   return (
     <section className="App">

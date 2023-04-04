@@ -6,10 +6,12 @@ import ECI from '../assets/images/eci-logo.png';
 const NavBar = ({ aadhar,isLogged,setIsLogged,phase,setPhase, election, web3,admin }: any) => {
     const [accounts, setAccounts] = useState([]);
     useEffect(() => {
-        web3.eth.getAccounts()
+        if (web3) {
+            web3.eth.getAccounts()
             .then((res: any) => {
                 setAccounts(res);
             });
+        }
     },[accounts]);
 
     const handleClick:(setPhase: React.Dispatch<React.SetStateAction<number>>) => Promise<void> = async (setPhase:React.Dispatch<React.SetStateAction<number>>) => {
