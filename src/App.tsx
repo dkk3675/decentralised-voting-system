@@ -35,10 +35,12 @@ const App = () => {
           let a:any = sessionStorage.getItem('aadhar');
           setAadhar(a);
         }
-        contract.methods.admin().call()
+    if (contract) {
+            contract.methods.admin().call()
             .then((res: string) => {
                 setAdmin(res);
             });
+        }
     },[admin]);
   
   useEffect(() => {
