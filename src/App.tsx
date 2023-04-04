@@ -18,11 +18,16 @@ const App = () => {
   let web3: any;
   let contract: any;
   if (window.ethereum) {
-    window.ethereum.request({ method: 'eth_requestAccounts' });
+    // window.ethereum.request({ method: 'eth_requestAccounts' });
     web3 = new Web3(window.ethereum);
     contract = new web3.eth.Contract(abi, address);
   }
   useEffect(() => {
+        // if (window.ethereum) {
+        //   window.ethereum.request({ method: 'eth_requestAccounts' });
+        //   web3 = new Web3(window.ethereum);
+        //   contract = new web3.eth.Contract(abi, address);
+        // }
         if (sessionStorage.getItem('isLogged') === 'true') {
           setIsLogged(true);
         }
