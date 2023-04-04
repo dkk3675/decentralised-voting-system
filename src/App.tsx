@@ -1,25 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React,{useEffect, useState} from 'react';
+import NavBar from './components/Navbar';
+import { Home } from './components/Home';
+import Footer from './components/Footer';
+import { setPage } from './interfaces/pages';
+import { address, abi } from "./assets/contract";
+import Web3 from "web3";
+import Login from './components/Login';
 
-function App() {
+declare let window: any;
+
+const App = () => {
+  const [isLogged, setIsLogged] = useState(false);
+  const [aadhar, setAadhar] = useState('------------');
+  const [phase, setPhase] = useState<number>(3);
+  const [admin, setAdmin] = useState('');
+  let web3: any;
+  let contract: any;
+  if (window.ethereum) {
+    window.ethereum.request({ method: 'eth_requestAccounts' });
+    web3 = new Web3(window.ethereum);
+    contract = new web3.eth.Contract(abi, address);
+  }
+  useEffect(() => {
+        if (sessionStorage.getItem('isLogged') === 'true') {
+          setIsLogged(true);
+        }
+        if (sessionStorage.getItem('aadhar') !== '------------') {
+          let a:any = sessionStorage.getItem('aadhar');
+          setAadhar(a);
+        }
+        contract.methods.admin().call()
+            .then((res: string) => {
+                setAdmin(res);
+            });
+    },[admin]);
+  
+  useEffect(() => {
+    contract.methods.state().call()
+      .then((res: setPage['phase']) => {
+        setPhase(Number(res));
+        // console.log(typeof(Number(res)),res);
+      });
+  },[phase]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <section className="App">
+      <NavBar aadhar={aadhar} isLogged={isLogged} setIsLogged={setIsLogged} phase={phase} setPhase={setPhase} election={contract} web3={web3} admin={admin} />
+      {
+        (isLogged) ? (
+        (window.ethereum)
+      ?
+          (<Home aadhar={aadhar} isLogged={isLogged} setIsLogged={setIsLogged} phase={phase} setPhase={setPhase} election={contract} web3={web3} admin={admin} />)
+      :
+          (<div className="flex flex-wrap h-[75vh] items-center justify-center">
+            <h1>Kindly install Metamask extension in your browser.</h1>
+            </div>)) :
+          (<Login setAadhar={setAadhar} isLogged={isLogged} setIsLogged={setIsLogged} />)
+      }
+      <Footer />
+    </section>
   );
 }
 

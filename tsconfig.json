@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "target": "es5",
     "lib": [
       "dom",
@@ -20,7 +21,8 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-, "election-contract/compile.js"  ]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "src/.d.ts", "src/interfaces/pages.ts"],
+  "exclude": ["node_modules", ".vscode"],
 }
+
+// "checkJs": false

@@ -1,77 +1,142 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.4.17;
 
-contract Election{
-	
-	address private admin;
+contract Election {
+    address public admin;
 
-	mapping(uint => Contestant) public contestants; 
+    uint public electionNumber;
+
+    mapping(uint => mapping(uint => Contestant)) public contestants;
+	mapping(uint => Contestant[]) public details;
 
     // mapping(address => bool) public voters;
-    mapping(address => Voter) private voters;
+    mapping(uint => mapping(string => Voter)) private voters;
+    string[] private users;
 
-	// uint voter counter;
-    uint public voterCount;
+    uint public contestantCount;
+	uint public totalVotes;
 
-    // uint contestant counter;
-	uint public contestantCount;
+    enum PHASE {
+        reg,
+        voting,
+        done,
+        nothing
+    }
+    PHASE public state;
 
-	enum PHASE{ reg, voting, done }
-	PHASE public state;
+    struct Contestant {
+        string name;
+        uint voteCount;
+        string party;
+        uint age;
+        string qualification;
+    }
 
-	struct Contestant{
-		uint id;
-		string name;
-		uint voteCount;
-		string party;
-		uint age;
-		string qualification;
-	}
+    struct Voter {
+        bool hasVoted;
+        uint vote;
+    }
 
-	struct Voter{
-		bool hasVoted;
-		uint vote;
-		bool isRegistered;
-	}
+    function Election() public {
+        admin = msg.sender;
+        state = PHASE.nothing;
+        electionNumber = 0;
+    }
 
-	function Election() public{
-		admin = msg.sender;
-        state = PHASE.reg;
-	}
-
-    function changeState(PHASE x) onlyAdmin public{
-		require(x > state);
+    function changeState(PHASE x) public onlyAdmin {
+        if(x == PHASE.voting){
+            require(contestantCount > 0);
+        }
         state = x;
     }
 
-	function addContestant(string memory _name , string memory _party , uint _age , string memory _qualification) public onlyAdmin validState(PHASE.reg){
-		contestantCount++;
-		contestants[contestantCount] = Contestant(contestantCount,_name,0,_party,_age,_qualification);
-	}
+    function search(string memory current_aadhar) public view returns (bool){
+        for(uint i=0;i<users.length;i++){
+            if(keccak256(current_aadhar) == keccak256(users[i])){
+                return false;
+            }
+        }
+        return true;
+    }
 
-	function voterRegisteration(address user) public onlyAdmin validState(PHASE.reg){
-        voterCount++;
-		voters[user].isRegistered = true;
-	}
+    function hasVoted(string memory aadhar) public view returns (bool){
+        return voters[electionNumber][aadhar].hasVoted;
+    }
 
-	function vote(uint _contestantId) public validState(PHASE.voting){
+    function reset() public payable onlyAdmin {
+        changeState(PHASE.nothing);
+        electionNumber++;
+        users = new string[](0);
+        contestantCount = 0;
+        totalVotes = 0;
+        admin.transfer(this.balance);
+    }
+
+    function addContestant(
+		string memory aadhar,
+        string memory _name,
+        string memory _party,
+        uint _age,
+        string memory _qualification
+    ) public payable validState(PHASE.reg) {
+        require(msg.value == 0.1 ether);
+        contestantCount++;
+        contestants[electionNumber][contestantCount] = Contestant(
+            _name,
+            0,
+            _party,
+            _age,
+            _qualification
+        );
+		voterRegistration(aadhar);
+    }
+
+    function voterRegistration(
+        string memory aadhar
+    ) public validState(PHASE.reg) {
+        users.push(aadhar);
+		voters[electionNumber][aadhar].hasVoted = false;
+    }
+
+    function vote(uint _contestantId,string memory aadhar) public validState(PHASE.voting) {
         require(contestantCount > 0);
-		require(voters[msg.sender].isRegistered);
-		require(!voters[msg.sender].hasVoted);
-        require(_contestantId > 0 && _contestantId <= contestantCount);
-		contestants[_contestantId].voteCount++;
-		voters[msg.sender].hasVoted = true;
-		voters[msg.sender].vote = _contestantId;
+        require(!voters[electionNumber][aadhar].hasVoted);
+        contestants[electionNumber][_contestantId].voteCount++;
+        voters[electionNumber][aadhar].hasVoted = true;
+        voters[electionNumber][aadhar].vote = _contestantId;
+        totalVotes++;
+    }
+
+	function getResults() public onlyAdmin{
+        changeState(PHASE.done);
+        uint maxVotes = contestants[electionNumber][1].voteCount;
+		for(uint i = 2;i <= contestantCount;i++){
+			if(contestants[electionNumber][i].voteCount > maxVotes){
+				maxVotes = contestants[electionNumber][i].voteCount;
+			}
+		}
+		for(i = 1;i <= contestantCount;i++){
+			if(contestants[electionNumber][i].voteCount == maxVotes){
+				details[electionNumber].push(contestants[electionNumber][i]);
+			}
+		}
 	}
 
-	modifier onlyAdmin(){
-		require(msg.sender == admin);
-		_;
-	}
-	
-	modifier validState(PHASE x){
-	    require(state == x);
-	    _;
-	}
+    function voterCount() public view returns (uint){
+        return users.length;
+    }
 
+    function detailCount() public view returns (uint){
+        return details[electionNumber].length;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin);
+        _;
+    }
+
+    modifier validState(PHASE x) {
+        require(state == x);
+        _;
+    }
 }
