@@ -1,5 +1,4 @@
 import React from "react";
-import { contractTS } from "../interfaces/pages";
 import ContestantRegForm from "../assets/ContestantRegForm";
 
 

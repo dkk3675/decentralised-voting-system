@@ -19,7 +19,7 @@ const Login = ({ setAadhar,isLogged,setIsLogged }:any) => {
       url: 'https://verifyaadhaarnumber.p.rapidapi.com/Uidverifywebsvcv1/VerifyAadhaarNumber',
       headers: {
         'content-type': 'application/x-www-form-urlencoded',
-        'X-RapidAPI-Key': 'e56d3afee7msh19b70760c68d4b8p1d6d95jsn3cb1d1167c65',
+        'X-RapidAPI-Key': process.env.REACT_APP_X_RapidAPI_Key,
         'X-RapidAPI-Host': 'verifyaadhaarnumber.p.rapidapi.com'
       },
       data: encodedParams

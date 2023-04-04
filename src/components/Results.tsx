@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React,{useEffect, useState} from "react";
 import Card from "../assets/Card";
-import { setPage } from "../interfaces/pages";
 
 const Results = ({ phase, election, web3 }: any) => {
     const [electionNumber, setElectionNumber] = useState();

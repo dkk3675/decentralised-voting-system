@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React,{useState,useEffect} from 'react';
-import { contractTS } from '../interfaces/pages';
 import Registration from './Registration';
 import Voting from './Voting';
 import Results from './Results';

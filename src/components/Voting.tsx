@@ -1,5 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { contractTS, setPage } from "../interfaces/pages";
 import Card from "../assets/Card";
 
 const Voting = ({ aadhar,phase, hasVoted, setHasVoted, election, web3 }: any) => {

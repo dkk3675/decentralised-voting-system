@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { contractTS } from "../interfaces/pages";
 
 interface Contestant{
     contestantData?: {
