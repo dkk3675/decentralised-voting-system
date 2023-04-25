@@ -60,7 +60,7 @@ const Login = ({ setAadhar,isLogged,setIsLogged }:any) => {
                   <input type="text" placeholder="Aadhar Number" className="input input-bordered mb-2" onChange={(e) => { setUserData({ ...userData, aadhar: e.target.value })}} value={userData.aadhar} maxLength={12} />
                   </div>
                   <div className="form-control">
-                  <input type="text" placeholder="Last 3 Digits of Mobile Number" className="input input-bordered" onChange={(e) => { setUserData({ ...userData, mobNo: e.target.value }) }} value={userData.mobNo} maxLength={3} />
+                  <input type="password" placeholder="Last 3 Digits of Mobile Number" className="input input-bordered" onChange={(e) => { setUserData({ ...userData, mobNo: e.target.value }) }} value={userData.mobNo} maxLength={3} />
                   </div>
                   <div className="form-control mt-6">
                     <button className="btn btn-primary" onClick={handleClick}>Login</button>
