@@ -1,4 +1,4 @@
-export const address:string = '0xAC68DEE4C32d0c87655099fC272D5b4932C42803';
+export const address:string = '0x02b7116B8C5c4F92524F0e32F8b6E1c1E6764Af0';
 export const abi: any = [
 	{
 		"constant": false,
